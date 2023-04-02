@@ -1,0 +1,14 @@
+keras
+tensorflow
+yfinance
+scikit-learn
+flask
+alpha_vantage
+statsmodel
+GoogleNews
+newspaper
+wordcloud
+nltk
+pandas
+numpy
+matplotlib
