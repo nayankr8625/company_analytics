@@ -4,9 +4,9 @@ yfinance
 scikit-learn
 flask
 alpha_vantage
-statsmodel
+statsmodels
 GoogleNews
-newspaper
+newspaper3k
 wordcloud
 nltk
 pandas
