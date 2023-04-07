@@ -5,6 +5,7 @@ import math
 import os
 import warnings
 import nltk
+import pandas as pd
 from sklearn.linear_model import LinearRegression
 import re
 import yfinance as yf
