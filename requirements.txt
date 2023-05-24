@@ -11,3 +11,5 @@ nltk
 pandas
 numpy
 matplotlib
+fastapi
+uvicorn
