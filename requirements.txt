@@ -7,7 +7,6 @@ alpha_vantage
 statsmodels
 GoogleNews
 newspaper3k
-wordcloud
 nltk
 pandas
 numpy
