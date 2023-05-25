@@ -1,8 +1,10 @@
 from sentiment_based_forecasting.data_processing import download_tickers
 from sentiment_based_forecasting.ml_models import MLModels
+from sentiment_based_forecasting import logger
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import os
 
 class PipelineTasks:
 
@@ -19,7 +21,28 @@ class PipelineTasks:
 
         return data
     
+    def esg_data_generation(self):
+        logger.info(f'ESG RATING  COLLECTION OF {self._quote} TASK STARTED')
+        df,json_data = download_tickers(self._quote).scrape_company_esg_data()
+        # CSV file path
+        file_path = 'esg_data/collected_esg_data.csv'
+
+        # Check if the file already exists
+        if os.path.exists(file_path):
+            # Append the DataFrame to the existing file
+            df.to_csv(file_path, mode='a', header=False, index=False)
+        else:
+            # Create a new file and write the DataFrame to it
+            df.to_csv(file_path, index=False)
+        return json_data,file_path
+    
+    def news_data_generation(self):
+        logger.info(f'NEWS COLLECTION for {self._quote} TASK STARTED')
+        df = download_tickers(self._quote).news_api_stock_news()
+        return df
+    
     def arima_model(self):
+        logger.info('DOING FORECATSING BY USING ARIMA MODEL')
         arima_pred, error_arima, test, predictions = self._model.ARIMA_ALGO()
         fig = plt.figure(figsize=(7.2, 4.8), dpi=65)
         plt.plot(test, label='Actual Price')
@@ -36,6 +59,7 @@ class PipelineTasks:
         }
 
     def lstm_model(self):
+        logger.info('DOING FORECATSING BY USING LSTM MODEL')
         lstm_pred, error_lstm , real_stock_price , predicted_stock_price = self._model.LSTM_ALGO()
         fig = plt.figure(figsize=(7.2, 4.8), dpi=65)
 
@@ -54,6 +78,7 @@ class PipelineTasks:
         }
 
     def regressor_model(self):
+        logger.info('DOING FORECATSING BY USING REGRESSOR MODEL')
         df, lr_pred, forecast_set, mean, error_lr, y_test, y_test_pred = self._model.LIN_REG_ALGO()
         fig = plt.figure(figsize=(7.2, 4.8), dpi=65)
         plt.plot(y_test, label='Actual Price')
@@ -69,6 +94,42 @@ class PipelineTasks:
             'error_lr' : error_lr,
             'path': image_path
         }
+    
+    # def collect_news_task(self):
+    #     logger.info(f'NEWS COLLECTION for {self._quote} TASK STARTED')
+
+    #     news_data = self._model.collect_news()
+
+    #     return news_data
+    
+    def sentiment_analyze_task(self):
+        logger.info(f'SENTIMENT ANALYSIS OF {self._quote} NEWS TASK STARTED')
+
+        news_list, global_polarity, tw_pol, positive, neutral, negative,\
+        positive_list, negative_list, neutral_list = self._model.sentiment_analysis()
+
+        #Creating PieCart
+        labels = ['Positive ['+str(round(positive))+'%]' , 'Neutral ['+str(round(neutral))+'%]','Negative ['+str(round(negative))+'%]']
+        sizes = [positive, neutral, negative]
+        colors = ['yellowgreen', 'blue','red']
+        patches, texts = plt.pie(sizes,colors=colors, startangle=90)
+        plt.style.use('default')
+        plt.legend(labels)
+        plt.title("Sentiment Analysis Result for stock= "+self._quote+"" )
+        plt.axis('equal')
+        # plt.savefig('SentAnalysis.png')
+        image_path = f'images/sentiment_analysis of stock {self._quote} on date {self.DATE}.png'
+        plt.savefig(image_path)
+        plt.close()
+
+        return {
+            'positive_news': positive_list,
+            'negative_news': negative_list,
+            'neutral_news': neutral_list,
+            'global_polarity': global_polarity,
+            'path': image_path
+        }
+
 
 
         

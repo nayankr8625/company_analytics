@@ -13,3 +13,6 @@ numpy
 matplotlib
 fastapi
 uvicorn
+selenium
+beautifulsoup4
+textblob

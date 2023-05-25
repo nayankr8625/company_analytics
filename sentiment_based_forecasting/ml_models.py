@@ -310,6 +310,7 @@ class MLModels:
             "##############################################################################")
         return df, lr_pred, forecast_set, mean, error_lr, y_test, y_test_pred
     
+    ## Below method is to extract news using Google news api due to some error currently it's not being used.
     def collect_news(self):
         quote = self._quote
         now = dt.date.today()
@@ -368,8 +369,7 @@ class MLModels:
             
             
     def sentiment_analysis(self):
-        quote = self._quote
-        df = self.collect_news(quote=quote)
+        df = download_tickers(tickers=self._quote).news_api_stock_news()
         print(f'Shape of collected data is {df.shape}')
         #Sentiment Analysis
         def percentage(part,whole):
@@ -386,7 +386,7 @@ class MLModels:
         positive_list = []
 
         #Iterating over the tweets in the dataframe
-        for news in df['Summary']:
+        for news in df['Content']:
             news_list.append(news)
             analyzer = SentimentIntensityAnalyzer().polarity_scores(news)
             neg = analyzer['neg']
@@ -425,20 +425,20 @@ class MLModels:
         print("Neutral Sentiment:", '%.2f' % len(neutral_list), end='\n')
         print("Negative Sentiment:", '%.2f' % len(negative_list), end='\n')
 
-        #Creating PieCart
-        labels = ['Positive ['+str(round(positive))+'%]' , 'Neutral ['+str(round(neutral))+'%]','Negative ['+str(round(negative))+'%]']
-        sizes = [positive, neutral, negative]
-        colors = ['yellowgreen', 'blue','red']
-        patches, texts = plt.pie(sizes,colors=colors, startangle=90)
-        plt.style.use('default')
-        plt.legend(labels)
-        plt.title("Sentiment Analysis Result for stock= "+quote+"" )
-        plt.axis('equal')
-        # plt.savefig('SentAnalysis.png')
-        plt.savefig('static/SA.png')
-        plt.close()
+        # #Creating PieCart
+        # labels = ['Positive ['+str(round(positive))+'%]' , 'Neutral ['+str(round(neutral))+'%]','Negative ['+str(round(negative))+'%]']
+        # sizes = [positive, neutral, negative]
+        # colors = ['yellowgreen', 'blue','red']
+        # patches, texts = plt.pie(sizes,colors=colors, startangle=90)
+        # plt.style.use('default')
+        # plt.legend(labels)
+        # plt.title("Sentiment Analysis Result for stock= "+quote+"" )
+        # plt.axis('equal')
+        # # plt.savefig('SentAnalysis.png')
+        # plt.savefig('static/SA.png')
+        # plt.close()
         
-        return news_list,global_polarity,tw_pol
+        return news_list, global_polarity, tw_pol, positive, neutral, negative, positive_list, negative_list, neutral_list
                
 
 
