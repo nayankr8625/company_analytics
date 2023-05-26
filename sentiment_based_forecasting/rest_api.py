@@ -7,10 +7,25 @@ import pandas as pd
 from pandas import DataFrame
 from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
 from fastapi.responses import RedirectResponse, JSONResponse, HTMLResponse, Response
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 
 app = FastAPI()
+
+# Configure CORS
+origins = [
+    "http://localhost",
+    "http://localhost:3000",  # Replace with the actual URL of your React app
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/", include_in_schema=False)
@@ -123,7 +138,7 @@ async def arima_forecasting(quote : str):
     else:
         raise HTTPException(status_code=404, detail="Item not found")
     
-@app.post("/regressor_forecast", description="Do Regressor forecasting and Predict next day stock price")
+@app.get("/regressor_forecast", description="Do Regressor forecasting and Predict next day stock price")
 async def regressor_forecasting(quote : str):
 
     response = PipelineTasks(quote=quote).regressor_model()
