@@ -46,7 +46,7 @@ if quote:
     esg_data_gen_button = st.button("Generate ESG Data")
     if esg_data_gen_button:
         st.write("ESG data generation task is running...")
-        _, tasks.esg_rating = tasks.esg_data_generation()
+        tasks.esg_rating = tasks.esg_data_generation()
         st.write("ESG data generation task completed!")
         st.write(f"Latest ESG rating of {tasks._quote}")
         st.write(tasks.esg_rating)
@@ -55,8 +55,8 @@ if quote:
     news_data_gen_button = st.button("Generate News Data")
     if news_data_gen_button:
         st.write("News data generation task is running...")
-        tasks.news_data_generation()
-        tasks.news_data = pd.read_csv(f'company_data/news_data/{tasks.DATE}_news_data_of_{tasks._quote}.csv')
+        df = tasks.news_data_generation()
+        tasks.news_data = df
         st.write("News data generation task completed!")
         st.write("Top 5 News:")
         st.dataframe(tasks.news_data.head(5))

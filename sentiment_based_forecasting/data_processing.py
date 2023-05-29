@@ -17,6 +17,12 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver import Chrome
+import streamlit as st
+
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 from services import logger
 
@@ -53,15 +59,35 @@ class download_tickers:
 
     def scrape_company_esg_data(self):
 
-        # creating web driver 
-        service = Service('chrome_driver/chromedriver.exe')
-        options = webdriver.ChromeOptions()
-        options.add_argument("--headless")
-        driver = Chrome(service=service, options=options)
-        stock_symbol = self._tickers
-        driver.set_page_load_timeout(10)
+        # # creating web driver 
+        # service = Service('chrome_driver/chromedriver.exe')
+        # options = webdriver.ChromeOptions()
+        # options.add_argument("--headless")
+        # driver = Chrome(service=service, options=options)
+        # stock_symbol = self._tickers
+        # driver.set_page_load_timeout(10)
+        try:
+            logger.debug('Using Selenium for Streamlit')
+            def get_driver(options):
+                
+                return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+            
+            options = Options()
+            options.add_argument('--disable-gpu')
+            options.add_argument('--headless')
+
+            driver = get_driver(options=options)
+
+        except:
+            logger.debug('Using LocL Chrome webdriver')
+            service = Service('chrome_driver/chromedriver.exe')
+            options = webdriver.ChromeOptions()
+            options.add_argument("--headless")
+            driver = Chrome(service=service, options=options)
+            driver.set_page_load_timeout(10) 
 
         # Opening webpage
+        stock_symbol = self._tickers
         logger.debug(f'Opening the sustainablity rating web page')
         driver.get("https://www.sustainalytics.com/esg-rating")
         time.sleep(1)
