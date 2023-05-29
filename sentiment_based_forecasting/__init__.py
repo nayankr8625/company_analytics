@@ -1,1 +1,0 @@
-from sentiment_based_forecasting.logger import logger

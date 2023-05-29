@@ -18,7 +18,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver import Chrome
 
-from sentiment_based_forecasting import logger
+from services import logger
 
 import pandas as pd
 import openai
@@ -31,7 +31,6 @@ class download_tickers:
         self._tickers = tickers
 
     def get_historical_yf(self):
-        logger.debug(f'Downloading stock data of {self._tickers}')
         quote = self._tickers
         end = datetime.now()
         start = datetime(end.year-2, end.month, end.day)
@@ -42,6 +41,7 @@ class download_tickers:
         df = pd.DataFrame(data=data)
         df = df[['Date', 'STOCK','Open', 'High', 'Low', 'Close', 'Volume', 'Dividends', 'Stock Splits']]
         df.reset_index(drop=True,inplace=True)
+        logger.debug(f'DOWNLOADED {self._tickers} STOCK DATA')
         return df
     
     def get_historical_other_api(self):
@@ -152,7 +152,7 @@ class download_tickers:
 
         # Create a Pandas DataFrame from the dictionary
         df = pd.DataFrame(data)
-        logger.debug(f'ESG data extraction of {self._tickers} completed')
+        logger.debug(f'ESG DATA EXTRACTION OF {self._tickers} COMPLETED')
 
         # Return the DataFrame
         return df,json_data
@@ -230,7 +230,7 @@ class download_tickers:
 
                 # Create a DataFrame from the list of dictionaries
                 news_df = pd.DataFrame(news_list)
-
+                logger.debug(f'DOWNLOADING NEWS FOR {self._tickers} COMPLETED')
                 return news_df
 
             else:

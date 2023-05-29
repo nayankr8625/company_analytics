@@ -53,6 +53,7 @@ class MLModels:
 
     def __init__(self,data,quote):
 
+        
         self._data = data
         self._quote  =quote
     

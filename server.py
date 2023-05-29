@@ -1,4 +1,5 @@
 from sentiment_based_forecasting.rest_api import app
+from sentiment_based_forecasting import rest_api
 import uvicorn
 
 # import logging
@@ -7,5 +8,5 @@ import uvicorn
 # logging.disable(logging.CRITICAL)
 
 
-
-uvicorn.run(app,host='127.0.0.1',port=8000)
+if __name__ == '__main__':
+    uvicorn.run("sentiment_based_forecasting.rest_api:app", host='127.0.0.1', port=8000, reload=True)

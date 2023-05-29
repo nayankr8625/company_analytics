@@ -70,7 +70,7 @@ def open_html_response(quote:str):
 @app.get("/show_esg_data",description="Show ESG ratings of company")
 def show_esg_data(quote:str):
 
-    response,file_path = PipelineTasks(quote=quote).esg_data_generation()
+    df,response,file_path = PipelineTasks(quote=quote).esg_data_generation()
 
     if response:
         return JSONResponse({
@@ -161,6 +161,22 @@ async def sentiment_analyzer(quote : str):
         return response
     else:
         raise HTTPException(status_code=404, detail="Item not found")
+    
+
+@app.post("/download_company_data", description="Download Company latest/current :- stock,ESG-RATING,news data")
+async def data_downloader(quote : str):
+
+    response = PipelineTasks(quote=quote).download_company_data()
+    if response:
+        return response
+    else:
+        raise HTTPException(status_code=404, detail="Item not found")
+    
+
+@app.post("/dummy_api", description="Dummy API")
+async def dummy():
+
+    return 'Check2'
 
       
 
