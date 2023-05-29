@@ -31,18 +31,21 @@ class download_tickers:
         self._tickers = tickers
 
     def get_historical_yf(self):
-        quote = self._tickers
-        end = datetime.now()
-        start = datetime(end.year-2, end.month, end.day)
-        data = yf.Ticker(quote).history(period='5y',interval='1d')
-        data['Date']=data.index.date
-        # data['Date']=pd.to_datetime(data['Date'],format='%Y-%M-%d')
-        data['STOCK'] = quote
-        df = pd.DataFrame(data=data)
-        df = df[['Date', 'STOCK','Open', 'High', 'Low', 'Close', 'Volume', 'Dividends', 'Stock Splits']]
-        df.reset_index(drop=True,inplace=True)
-        logger.debug(f'DOWNLOADED {self._tickers} STOCK DATA')
-        return df
+        try:
+            quote = self._tickers
+            end = datetime.now()
+            start = datetime(end.year-2, end.month, end.day)
+            data = yf.Ticker(quote).history(period='5y',interval='1d')
+            data['Date']=data.index.date
+            # data['Date']=pd.to_datetime(data['Date'],format='%Y-%M-%d')
+            data['STOCK'] = quote
+            df = pd.DataFrame(data=data)
+            df = df[['Date', 'STOCK','Open', 'High', 'Low', 'Close', 'Volume', 'Dividends', 'Stock Splits']]
+            df.reset_index(drop=True,inplace=True)
+            logger.debug(f'DOWNLOADED {self._tickers} STOCK DATA')
+            return df
+        except:
+            logger.debug('Enter a stock Symbol')
     
     def get_historical_other_api(self):
         pass

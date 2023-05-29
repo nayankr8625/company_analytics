@@ -13,6 +13,7 @@ pandas
 scikit-learn
 selenium
 statsmodels
+streamlit
 tensorflow
 textblob
 uvicorn

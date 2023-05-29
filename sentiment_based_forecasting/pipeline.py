@@ -11,9 +11,20 @@ class PipelineTasks:
     def __init__(self,quote):
 
         self._quote = quote
-        self._model = MLModels(data=self.data_generation(),quote=self._quote)
+        if self._quote:
+            self._model = MLModels(data=self.data_generation(),quote=self._quote)
+        else:
+            logger.debug('Enter Stock Symbol to build models')
 
         self.DATE = pd.Timestamp.today().strftime('%Y-%m-%d')
+
+        self.arima_result = None
+        self.lstm_result = None
+        self.regressor_result = None
+        self.sentiment_result = None
+        self.news_data = None
+        self.stock_data = None
+        self.esg_rating = None
         
     @measure_time
     def data_generation(self):
@@ -171,28 +182,3 @@ class PipelineTasks:
             'esg_data_path': f'{esg_data_folder_path}{self.DATE}_esg_data_of_{quote}.csv',
             'news_data_path': f'{news_data_folder_path}{self.DATE}_news_data_of_{quote}.csv'
         }
-
-
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-        
