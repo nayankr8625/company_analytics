@@ -112,6 +112,8 @@ def streamlit_app(tasks, session_state):
         else:
             st.write("Please generate news data first.")
 
+
+    st.subheader("Recommendation")
     # Recommendation
     Recommendation_button = st.button("Stock Recommendation")
     if Recommendation_button:
@@ -122,7 +124,7 @@ def streamlit_app(tasks, session_state):
         stock_data = session_state.cache.get('stock_data')
 
         # Check if sentiment_result is None
-        if all(value is None for value in (arima_result, lstm_result, regressor_result, sentiment_result)):
+        if any(value is None for value in (arima_result, lstm_result, regressor_result, sentiment_result)):
             st.write("Sentiment analysis and Building Forecasting model is required before making a recommendation.")
         else:
             mean = stock_data['Close'].mean()
