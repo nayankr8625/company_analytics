@@ -45,7 +45,7 @@ def streamlit_app(tasks, session_state):
     esg_data_gen_button = st.button("Generate ESG Data")
     if esg_data_gen_button:
         st.write("ESG data generation task is running...")
-        _, tasks.esg_rating = tasks.esg_data_generation()
+        session_state.cache['esg_rating'] = tasks.esg_data_generation()[1]
         st.write("ESG data generation task completed!")
         st.write(f"Latest ESG rating of {tasks._quote}")
         st.json(session_state.cache['esg_rating'])
@@ -54,8 +54,7 @@ def streamlit_app(tasks, session_state):
     news_data_gen_button = st.button("Generate News Data")
     if news_data_gen_button:
         st.write("News data generation task is running...")
-        tasks.news_data_generation()
-        tasks.news_data = pd.read_csv(f'company_data/news_data/{tasks.DATE}_news_data_of_{tasks._quote}.csv')
+        session_state.cache['news_df'] = tasks.news_data_generation()
         st.write("News data generation task completed!")
         st.write("Top 5 News:")
         st.dataframe(session_state.cache['news_df'].head(20))
