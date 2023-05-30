@@ -11,20 +11,8 @@ class PipelineTasks:
     def __init__(self,quote):
 
         self._quote = quote
-<<<<<<< HEAD
-<<<<<<< HEAD
         self._model = MLModels(data=self.data_generation(),quote=self._quote)
         
-=======
-        if self._quote:
-            self._model = MLModels(data=self.data_generation(),quote=self._quote)
-        else:
-            logger.debug('Enter Stock Symbol to build models')
->>>>>>> 91945de (added streamlit webapp)
-=======
-        self._model = MLModels(data=self.data_generation(),quote=self._quote)
-        
->>>>>>> 444505d (added caching and code updation for recommendation)
 
         self.DATE = pd.Timestamp.today().strftime('%Y-%m-%d')
 
@@ -35,14 +23,7 @@ class PipelineTasks:
         self.news_data = None
         self.stock_data = None
         self.esg_rating = None
-<<<<<<< HEAD
-<<<<<<< HEAD
         self.sentiment_cache = None
-=======
->>>>>>> 91945de (added streamlit webapp)
-=======
-        self.sentiment_cache = None
->>>>>>> 444505d (added caching and code updation for recommendation)
         
     @measure_time
     def data_generation(self):
@@ -203,10 +184,6 @@ class PipelineTasks:
             'stock_data_path': f'{stock_data_folder_path}{self.DATE}_stock_data_of_{quote}.csv',
             'esg_data_path': f'{esg_data_folder_path}{self.DATE}_esg_data_of_{quote}.csv',
             'news_data_path': f'{news_data_folder_path}{self.DATE}_news_data_of_{quote}.csv'
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 444505d (added caching and code updation for recommendation)
         }
     
     def recommendation(self,sentiment_result,mean,arima_result,lstm_result,regressor_result):
@@ -256,11 +233,4 @@ class PipelineTasks:
             mess1,
             message
         }
-<<<<<<< HEAD
         
-=======
-        }
->>>>>>> 91945de (added streamlit webapp)
-=======
-        
->>>>>>> 444505d (added caching and code updation for recommendation)
