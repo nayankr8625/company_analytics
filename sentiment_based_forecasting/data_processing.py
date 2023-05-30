@@ -109,7 +109,7 @@ class download_tickers:
         for i in stock_symbol:
 
             tickers.send_keys(i)
-            # time.sleep(2)
+            time.sleep(2)
         
         logger.debug(f'Opening the {self._tickers} link')
         try:
