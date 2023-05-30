@@ -21,6 +21,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver import Chrome
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException
 import streamlit as st
 
 from selenium import webdriver
@@ -97,6 +98,7 @@ class download_tickers:
         stock_symbol = self._tickers
         logger.debug(f'Opening the sustainablity rating web page')
         driver.get("https://www.sustainalytics.com/esg-rating")
+        # time.sleep(1)
         
         # waiting for the page to load
         # Searchig for stock symbol 
@@ -111,14 +113,18 @@ class download_tickers:
         
         logger.debug(f'Opening the {self._tickers} link')
         try:
-
-            wait = WebDriverWait(driver, 10)
+            wait = WebDriverWait(driver, 30)  # Increase the timeout as needed
             element = wait.until(EC.element_to_be_clickable((By.XPATH, "//a[@class='search-link js-fix-path']")))
             element.click()
+        except StaleElementReferenceException:
+            logger.debug("Stale element reference. Trying again to locate the element.")
+            try:
+                element = driver.find_element(By.XPATH, "//a[@class='search-link js-fix-path']")
+                element.click()
+            except NoSuchElementException:
+                logger.debug("Element not found.")
         except Exception as e:
-            logger.debug(f'Exception Caused in Using selenuim please refresh and try again {e}')
-        # In case of an error, try changing the
-        # XPath used here.
+            logger.debug(f"Exception caused while waiting for element: {e}")
 
         src = driver.page_source
 
