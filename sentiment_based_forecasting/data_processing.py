@@ -81,6 +81,7 @@ class download_tickers:
             options.add_argument('--headless')
 
             driver = get_driver(options=options)
+            driver.implicitly_wait(10)
 
         except:
             logger.debug('Using LocL Chrome webdriver')
@@ -109,7 +110,7 @@ class download_tickers:
         
         time.sleep(2)
         logger.debug(f'Opening the {self._tickers} link')
-        wait = WebDriverWait(driver, 3)
+        wait = WebDriverWait(driver, 10)
         element = wait.until(EC.element_to_be_clickable((By.XPATH, "//a[@class='search-link js-fix-path']")))
         element.click()
         # In case of an error, try changing the
