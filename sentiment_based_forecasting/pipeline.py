@@ -11,10 +11,8 @@ class PipelineTasks:
     def __init__(self,quote):
 
         self._quote = quote
-        if self._quote:
-            self._model = MLModels(data=self.data_generation(),quote=self._quote)
-        else:
-            logger.debug('Enter Stock Symbol to build models')
+        self._model = MLModels(data=self.data_generation(),quote=self._quote)
+        
 
         self.DATE = pd.Timestamp.today().strftime('%Y-%m-%d')
 
@@ -25,6 +23,7 @@ class PipelineTasks:
         self.news_data = None
         self.stock_data = None
         self.esg_rating = None
+        self.sentiment_cache = None
         
     @measure_time
     def data_generation(self):
@@ -85,12 +84,14 @@ class PipelineTasks:
         image_path = f'images/LSTM forecasting {self._quote} on {self.DATE} .png'
         plt.savefig(image_path)
         plt.close(fig)
-
-        return {
+        result = {
             'lstm_pred' : lstm_pred,
             'error_lstm' : error_lstm,
             'path': image_path
         }
+        self.lstm_result = result
+
+        return result 
     
     @measure_time
     def regressor_model(self):
@@ -119,11 +120,11 @@ class PipelineTasks:
     #     return news_data
 
     @measure_time
-    def sentiment_analyze_task(self):
+    def sentiment_analyze_task(self,df):
         logger.info(f'SENTIMENT ANALYSIS OF {self._quote} NEWS TASK STARTED')
 
         news_list, global_polarity, tw_pol, positive, neutral, negative,\
-        positive_list, negative_list, neutral_list = self._model.sentiment_analysis()
+        positive_list, negative_list, neutral_list = self._model.sentiment_analysis(df=df)
 
         #Creating PieCart
         labels = ['Positive ['+str(round(positive))+'%]' , 'Neutral ['+str(round(neutral))+'%]','Negative ['+str(round(negative))+'%]']
@@ -138,14 +139,16 @@ class PipelineTasks:
         image_path = f'images/sentiment_analysis of stock {self._quote} on date {self.DATE}.png'
         plt.savefig(image_path)
         plt.close()
-
-        return {
+        res = {
             'positive_news': positive_list,
             'negative_news': negative_list,
             'neutral_news': neutral_list,
-            'global_polarity': global_polarity,
+            'polarity': tw_pol,
             'path': image_path
         }
+        self.sentiment_cache = res
+
+        return res
     
     @measure_time
     def download_company_data(self):
@@ -182,3 +185,52 @@ class PipelineTasks:
             'esg_data_path': f'{esg_data_folder_path}{self.DATE}_esg_data_of_{quote}.csv',
             'news_data_path': f'{news_data_folder_path}{self.DATE}_news_data_of_{quote}.csv'
         }
+    
+    def recommendation(self,sentiment_result,mean,arima_result,lstm_result,regressor_result):
+
+        # sentiment_result = self.sentiment_cache
+        # mean = self.stock_data['Close'].mean()
+        # arima_result = self.arima_result
+        # lstm_result = self.lstm_result
+        # regressor_result = self.regressor_result
+
+        model_dict_result = {'arima_model':arima_result['error_arima'],
+                             'lstm_model':lstm_result['error_lstm'],
+                             'regressor_model':regressor_result['error_lr']}
+
+        # Choosing Best Model
+
+        def find_key_by_value(dictionary, value):
+            for key, val in dictionary.items():
+                if val == value:
+                    return key
+            return None
+        
+        best_model_rmse = min(arima_result['error_arima'],lstm_result['error_lstm'],regressor_result['error_lr'])
+        best_model_key = find_key_by_value(model_dict_result,best_model_rmse)
+        best_model_res = f'BEST ML MODEL WITH RMSE {best_model_rmse} IS {best_model_key}'
+
+        if best_model_key == 'arima_model':
+            best_model_forecast = arima_result['arima_pred']
+        elif best_model_key == 'lstm_model':
+            best_model_forecast = lstm_result['lstm_pred']
+        else:
+            best_model_forecast = regressor_result['lr_pred']
+        
+        mess1 = f'Next Day Forecast according to best ML model is {best_model_forecast}'
+
+        if (best_model_forecast>mean) & (sentiment_result['polarity']=='POSITIVE'):
+
+            message = f'According to ML and Sentiment Analysis {self._quote} stock os Going UP\
+                So its recommended to BUY the stock\
+                    \U0001F4C8\U0001F4C8\U0001F4C8'
+        else:
+            message = f'SELL the stock\
+            \U0001F4C9\U0001F4C9\U0001F4C9'
+
+        return {
+            best_model_res,
+            mess1,
+            message
+        }
+        

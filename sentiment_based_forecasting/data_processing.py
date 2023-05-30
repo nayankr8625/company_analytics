@@ -11,6 +11,8 @@ import numpy as np
 import time
 
 import pandas as pd
+import json
+
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -73,7 +75,7 @@ class download_tickers:
                 return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
             
             options = Options()
-            options.add_argument('--disable-gpu')
+            # options.add_argument('--disable-gpu')
             options.add_argument('--headless')
 
             driver = get_driver(options=options)
@@ -181,10 +183,11 @@ class download_tickers:
 
         # Create a Pandas DataFrame from the dictionary
         df = pd.DataFrame(data)
+        json_string = json.dumps(json_data)
         logger.debug(f'ESG DATA EXTRACTION OF {self._tickers} COMPLETED')
 
         # Return the DataFrame
-        return df,json_data
+        return df,json_string
     
 
     def get_indepth_news(self,url):

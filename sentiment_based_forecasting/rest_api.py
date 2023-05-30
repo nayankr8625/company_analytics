@@ -10,6 +10,12 @@ from fastapi.responses import RedirectResponse, JSONResponse, HTMLResponse, Resp
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+import nltk
+
+
+nltk.download('punkt')
+nltk.download('vader_lexicon')
+
 
 app = FastAPI()
 
@@ -155,8 +161,8 @@ async def regressor_forecasting(quote : str):
 
 @app.post("/sentiment_analyzer", description="Show sentiment analysis of the stock symbol according to latest news")
 async def sentiment_analyzer(quote : str):
-
-    response = PipelineTasks(quote=quote).sentiment_analyze_task()
+    df = PipelineTasks(quote=quote).data_generation()
+    response = PipelineTasks(quote=quote).sentiment_analyze_task(df=df)
     if response:
         return response
     else:
@@ -176,7 +182,7 @@ async def data_downloader(quote : str):
 @app.post("/dummy_api", description="Dummy API")
 async def dummy():
 
-    return 'Check2'
+    return 'HELLO HWHWHWHWH'
 
       
 

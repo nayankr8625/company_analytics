@@ -369,8 +369,8 @@ class MLModels:
             print('Looks like, there is some error in retrieving the data, Please try again or try with a different ticker.')
             
             
-    def sentiment_analysis(self):
-        df = download_tickers(tickers=self._quote).news_api_stock_news()
+    def sentiment_analysis(self,df):
+        df = df
         print(f'Shape of collected data is {df.shape}')
         #Sentiment Analysis
         def percentage(part,whole):
@@ -425,19 +425,6 @@ class MLModels:
         print("Positive Sentiment:", '%.2f' % len(positive_list), end='\n')
         print("Neutral Sentiment:", '%.2f' % len(neutral_list), end='\n')
         print("Negative Sentiment:", '%.2f' % len(negative_list), end='\n')
-
-        # #Creating PieCart
-        # labels = ['Positive ['+str(round(positive))+'%]' , 'Neutral ['+str(round(neutral))+'%]','Negative ['+str(round(negative))+'%]']
-        # sizes = [positive, neutral, negative]
-        # colors = ['yellowgreen', 'blue','red']
-        # patches, texts = plt.pie(sizes,colors=colors, startangle=90)
-        # plt.style.use('default')
-        # plt.legend(labels)
-        # plt.title("Sentiment Analysis Result for stock= "+quote+"" )
-        # plt.axis('equal')
-        # # plt.savefig('SentAnalysis.png')
-        # plt.savefig('static/SA.png')
-        # plt.close()
         
         return news_list, global_polarity, tw_pol, positive, neutral, negative, positive_list, negative_list, neutral_list
                
