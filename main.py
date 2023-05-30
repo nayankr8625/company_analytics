@@ -9,7 +9,7 @@ import pandas as pd
 import os
 import nltk
 nltk.download('punkt')
-nltk.download('punkt')
+nltk.download('vader_lexicon')
 
 
 # Set Streamlit app title and sidebar
