@@ -78,10 +78,11 @@ class download_tickers:
             
             options = Options()
             options.add_argument('--disable-gpu')
-            options.add_argument('--headless')
+            # options.add_argument('--headless')
 
             driver = get_driver(options=options)
             driver.implicitly_wait(10)
+            driver.set_page_load_timeout(30)
 
         except:
             logger.debug('Using LocL Chrome webdriver')
