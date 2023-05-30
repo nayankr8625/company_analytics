@@ -84,7 +84,8 @@ class download_tickers:
             driver.implicitly_wait(10)
             driver.set_page_load_timeout(30)
 
-        except:
+        except Exception as e:
+            logger.debug(f'Exception caught in using Selenium for streamlit {e}')
             logger.debug('Using LocL Chrome webdriver')
             service = Service('chrome_driver/chromedriver.exe')
             options = webdriver.ChromeOptions()
@@ -107,13 +108,18 @@ class download_tickers:
         for i in stock_symbol:
 
             tickers.send_keys(i)
-            time.sleep(0.5)
+            time.sleep(2)
         
         time.sleep(2)
         logger.debug(f'Opening the {self._tickers} link')
-        wait = WebDriverWait(driver, 10)
-        element = wait.until(EC.element_to_be_clickable((By.XPATH, "//a[@class='search-link js-fix-path']")))
-        element.click()
+        try:
+
+            wait = WebDriverWait(driver, 10)
+            element = wait.until(EC.element_to_be_clickable((By.XPATH, "//a[@class='search-link js-fix-path']")))
+            element.click()
+        except Exception as e:
+            logger.debug('Exception Caused in Using selenuim please refresh and try again')
+            return 'Exception Caused in Using selenuim please refresh and try again'
         # In case of an error, try changing the
         # XPath used here.
 
@@ -193,6 +199,7 @@ class download_tickers:
         logger.debug(f'ESG DATA EXTRACTION OF {self._tickers} COMPLETED')
 
         # Return the DataFrame
+        driver.quit()
         return df,json_string
     
 
