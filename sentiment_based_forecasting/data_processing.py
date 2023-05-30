@@ -78,7 +78,7 @@ class download_tickers:
             
             options = Options()
             options.add_argument('--disable-gpu')
-            # options.add_argument('--headless')
+            options.add_argument('--headless')
 
             driver = get_driver(options=options)
             driver.implicitly_wait(10)
@@ -97,7 +97,6 @@ class download_tickers:
         stock_symbol = self._tickers
         logger.debug(f'Opening the sustainablity rating web page')
         driver.get("https://www.sustainalytics.com/esg-rating")
-        time.sleep(1)
         
         # waiting for the page to load
         # Searchig for stock symbol 
@@ -108,9 +107,8 @@ class download_tickers:
         for i in stock_symbol:
 
             tickers.send_keys(i)
-            time.sleep(2)
+            # time.sleep(2)
         
-        time.sleep(2)
         logger.debug(f'Opening the {self._tickers} link')
         try:
 
@@ -118,8 +116,7 @@ class download_tickers:
             element = wait.until(EC.element_to_be_clickable((By.XPATH, "//a[@class='search-link js-fix-path']")))
             element.click()
         except Exception as e:
-            logger.debug('Exception Caused in Using selenuim please refresh and try again')
-            return 'Exception Caused in Using selenuim please refresh and try again'
+            logger.debug(f'Exception Caused in Using selenuim please refresh and try again {e}')
         # In case of an error, try changing the
         # XPath used here.
 
