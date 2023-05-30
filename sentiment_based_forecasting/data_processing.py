@@ -19,6 +19,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver import Chrome
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import streamlit as st
 
 from selenium import webdriver
@@ -107,7 +109,9 @@ class download_tickers:
         
         time.sleep(2)
         logger.debug(f'Opening the {self._tickers} link')
-        driver.find_element(By.XPATH, "//a[@class='search-link js-fix-path']").click()
+        wait = WebDriverWait(driver, 3)
+        element = wait.until(EC.element_to_be_clickable((By.XPATH, "//a[@class='search-link js-fix-path']")))
+        element.click()
         # In case of an error, try changing the
         # XPath used here.
 
