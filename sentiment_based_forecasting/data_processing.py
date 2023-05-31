@@ -15,12 +15,17 @@ import json
 
 from bs4 import BeautifulSoup
 import streamlit as st
-## Chrome Webdriver Selenium
+
+# Chrome Webdriver
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver import Chrome
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException
+import streamlit as st
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -90,6 +95,8 @@ class download_tickers:
                 options=firefoxOptions,
                 service=service,
             )
+            driver.implicitly_wait(10)
+            driver.set_page_load_timeout(30) 
 
         except:
             logger.debug('Using Chrome Webdriver Selenium for Streamlit')
