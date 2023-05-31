@@ -12,11 +12,13 @@ openai
 pandas
 scikit-learn
 seleniumbase
+selenium
 statsmodels
 streamlit
 tensorflow
 textblob
 uvicorn
+undetected_chromedriver
 webdriver-manager
 yfinance
 

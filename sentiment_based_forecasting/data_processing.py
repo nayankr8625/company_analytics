@@ -9,9 +9,14 @@ from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 import time
+import logging
 
 import pandas as pd
 import json
+
+import shutil
+import time
+from pathlib import Path
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -28,6 +33,10 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+
+# UC webdriver
+import undetected_chromedriver as uc
+
 
 from services import logger
 
@@ -86,13 +95,36 @@ class download_tickers:
             driver.set_page_load_timeout(30)
 
         except Exception as e:
-            logger.debug(f'Exception caught in using Selenium for streamlit {e}')
-            logger.debug('Using LocL Chrome webdriver')
-            service = Service('chrome_driver/chromedriver.exe')
-            options = webdriver.ChromeOptions()
+            # logger.debug(f'Exception caught in using Selenium for streamlit {e}')
+            # logger.debug('Using LocL Chrome webdriver')
+            # service = Service('chrome_driver/chromedriver.exe')
+            # options = webdriver.ChromeOptions()
+            # options.add_argument("--headless")
+            # driver = Chrome(service=service, options=options)
+            # driver.set_page_load_timeout(10)
+            browser_executable_path = shutil.which("chromium")
+            logger.info(browser_executable_path)
+
+            # delete old log file
+            Path('selenium.log').unlink(missing_ok=True)
+            time.sleep(1)
+
+            options = uc.ChromeOptions()
             options.add_argument("--headless")
-            driver = Chrome(service=service, options=options)
-            driver.set_page_load_timeout(10) 
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("--disable-gpu")
+            options.add_argument("--disable-features=NetworkService")
+            options.add_argument("--window-size=1920x1080")
+            options.add_argument("--disable-features=VizDisplayCompositor")
+
+            driver = uc.Chrome(browser_executable_path=browser_executable_path,
+                # debug=False,
+                # headless=True,
+                options=options,
+                use_subprocess=False,
+                log_level=logging.DEBUG,
+                service_log_path='selenium.log') 
 
         # Opening webpage
         stock_symbol = self._tickers
