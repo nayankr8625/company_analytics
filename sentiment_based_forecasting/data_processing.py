@@ -24,7 +24,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver import Chrome
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException
+from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException, ElementNotInteractableException
 import streamlit as st
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -125,13 +125,25 @@ class download_tickers:
         for i in stock_symbol:
 
             tickers.send_keys(i)
-            time.sleep(0.5)
+            time.sleep(2)
         
         time.sleep(2)
         logger.debug(f'Opening the {self._tickers} link')
-        driver.find_element(By.XPATH, "//a[@class='search-link js-fix-path']").click()
-        # In case of an error, try changing the
-        # XPath used here.
+        try:
+            wait = WebDriverWait(driver, 30)  # Increase the timeout as needed
+            element = wait.until(EC.element_to_be_clickable((By.XPATH, "//a[@class='search-link js-fix-path']")))
+            element.click()
+        except (StaleElementReferenceException,ElementNotInteractableException):
+            logger.debug("Stale element reference. Trying again to locate the element.")
+            try:
+                element = driver.find_element(By.XPATH, "//a[@class='search-link js-fix-path']")
+                element.click()
+            except NoSuchElementException:
+                logger.debug("Element not found.")
+        except Exception as e:
+            logger.debug(f"Exception caused while waiting for element: {e}")
+                # In case of an error, try changing the
+                # XPath used here.
 
         src = driver.page_source
 
