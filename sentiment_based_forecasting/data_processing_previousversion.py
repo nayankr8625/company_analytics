@@ -77,13 +77,52 @@ class download_tickers:
 
     def scrape_company_esg_data(self):
 
+        # # creating web driver 
+        # service = Service('chrome_driver/chromedriver.exe')
+        # options = webdriver.ChromeOptions()
+        # options.add_argument("--headless")
+        # driver = Chrome(service=service, options=options)
+        # stock_symbol = self._tickers
+        # driver.set_page_load_timeout(10)
+        # try:
+        #     logger.debug('Using Selenium for Streamlit')
+        #     def get_driver(options):
+                
+        #         return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+            
+        #     options = Options()
+        #     options.add_argument('--disable-gpu')
+        #     options.add_argument('--headless')
+
+        #     driver = get_driver(options=options)
+        #     driver.implicitly_wait(10)
+        #     driver.set_page_load_timeout(30)
+
+        # except Exception as e:
+        #     logger.debug(f'Exception caught in using Selenium for streamlit {e}')
+        #     logger.debug('Using Undetected Chrome webdriver')
+        #     # service = Service('chrome_driver/chromedriver.exe')
+        #     # options = webdriver.ChromeOptions()
+        #     # options.add_argument("--headless")
+        #     # driver = Chrome(service=service, options=options)
+        #     # driver.set_page_load_timeout(10)
+
+        #     # or specify your own chromedriver binary (why you would need this, i don't know)
+        #     options = uc.ChromeOptions()
+        #     options.add_argument("--headless")
+        #     options.add_argument("--no-sandbox")
+        #     options.add_argument("--disable-dev-shm-usage")
+        #     options.add_argument("--disable-gpu")
+        #     options.add_argument("--disable-features=NetworkService")
+        #     options.add_argument("--window-size=1920x1080")
+        #     options.add_argument("--disable-features=VizDisplayCompositor") 
+        #     driver = uc.Chrome( version_main = 114,options = options )
+    
         driver = Driver(headless=True, uc=True)
         # Opening webpage
         stock_symbol = self._tickers
         logger.debug(f'Opening the sustainablity rating web page')
         driver.get("https://www.sustainalytics.com/esg-rating")
-        # page_actions.wait_for_text(driver, "OH YEAH, you passed!", "h2")
-        # time.sleep(1)
         
         # waiting for the page to load
         # Searchig for stock symbol 
