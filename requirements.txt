@@ -11,6 +11,7 @@ numpy
 openai
 pandas
 scikit-learn
+selenium
 seleniumbase
 statsmodels
 streamlit
