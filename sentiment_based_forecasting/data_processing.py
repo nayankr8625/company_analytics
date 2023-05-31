@@ -75,7 +75,7 @@ class download_tickers:
                 return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
             
             options = Options()
-            # options.add_argument('--disable-gpu')
+            options.add_argument('--disable-gpu')
             options.add_argument('--headless')
 
             driver = get_driver(options=options)

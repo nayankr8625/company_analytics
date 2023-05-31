@@ -7,6 +7,9 @@ from services import measure_time, logger
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
+import nltk
+nltk.download('punkt')
+nltk.download('vader_lexicon')
 
 # Set Streamlit app title and sidebar
 st.set_page_config(page_title="COMPANY ANALYTICS", layout="wide")
