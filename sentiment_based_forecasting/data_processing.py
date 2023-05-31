@@ -95,20 +95,20 @@ class download_tickers:
             driver.set_page_load_timeout(30)
 
         except Exception as e:
-            # logger.debug(f'Exception caught in using Selenium for streamlit {e}')
-            # logger.debug('Using LocL Chrome webdriver')
+            logger.debug(f'Exception caught in using Selenium for streamlit {e}')
+            logger.debug('Using Undetected Chrome webdriver')
             # service = Service('chrome_driver/chromedriver.exe')
             # options = webdriver.ChromeOptions()
             # options.add_argument("--headless")
             # driver = Chrome(service=service, options=options)
             # driver.set_page_load_timeout(10)
-            browser_executable_path = shutil.which("chromium")
-            logger.info(browser_executable_path)
+            uc.TARGET_VERSION = 114
 
-            # delete old log file
-            Path('selenium.log').unlink(missing_ok=True)
-            time.sleep(1)
+            # or specify your own chromedriver binary (why you would need this, i don't know)
 
+            uc.install(
+                executable_path = 'c:/users/user1/chromedriver.exe' ,
+                )
             options = uc.ChromeOptions()
             options.add_argument("--headless")
             options.add_argument("--no-sandbox")
@@ -116,15 +116,11 @@ class download_tickers:
             options.add_argument("--disable-gpu")
             options.add_argument("--disable-features=NetworkService")
             options.add_argument("--window-size=1920x1080")
-            options.add_argument("--disable-features=VizDisplayCompositor")
+            options.add_argument("--disable-features=VizDisplayCompositor") 
+            options.add_argument( f'--proxy-server=socks5://127.0.0.1:9050' )
+            driver = uc.Chrome( options = options )
 
-            driver = uc.Chrome(browser_executable_path=browser_executable_path,
-                # debug=False,
-                # headless=True,
-                options=options,
-                use_subprocess=False,
-                log_level=logging.DEBUG,
-                service_log_path='selenium.log') 
+            
 
         # Opening webpage
         stock_symbol = self._tickers
