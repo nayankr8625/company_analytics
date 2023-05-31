@@ -5,16 +5,15 @@ from alpha_vantage.timeseries import TimeSeries
 import requests
 import newspaper
 from datetime import datetime, timedelta
+
 import pandas as pd
 import numpy as np
 import time
-import json
-from bs4 import BeautifulSoup
-from services import logger
-import pandas as pd
-import openai
 
-# Chrome Webdriver
+import pandas as pd
+import json
+
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -24,21 +23,16 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException
 import streamlit as st
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-# Firefox Webdriver
-from selenium import webdriver
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.service import Service
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-from webdriver_manager.firefox import GeckoDriverManager
+from services import logger
 
+import pandas as pd
+import openai
 
 
 
@@ -78,7 +72,7 @@ class download_tickers:
         # stock_symbol = self._tickers
         # driver.set_page_load_timeout(10)
         try:
-            logger.debug('Using Selenium for Streamlit For CHROME WebDriver.')
+            logger.debug('Using Selenium for Streamlit')
             def get_driver(options):
                 
                 return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
@@ -91,93 +85,46 @@ class download_tickers:
             driver.implicitly_wait(10)
             driver.set_page_load_timeout(30)
 
-            # Starting Scraping
-            stock_symbol = self._tickers
-            logger.debug(f'Opening the sustainablity rating web page')
-            driver.get("https://www.sustainalytics.com/esg-rating")
-            # time.sleep(1)
-            
-            # waiting for the page to load
-            # Searchig for stock symbol 
-            tickers = driver.find_element(By.ID, "searchInput")
-
-            # Enter Your Stock Symbol
-
-            for i in stock_symbol:
-
-                tickers.send_keys(i)
-                time.sleep(2)
-            
-            logger.debug(f'Opening the {self._tickers} link')
-            try:
-                wait = WebDriverWait(driver, 30)  # Increase the timeout as needed
-                element = wait.until(EC.element_to_be_clickable((By.XPATH, "//a[@class='search-link js-fix-path']")))
-                element.click()
-            except StaleElementReferenceException:
-                logger.debug("Stale element reference. Trying again to locate the element.")
-                try:
-                    element = driver.find_element(By.XPATH, "//a[@class='search-link js-fix-path']")
-                    element.click()
-                except NoSuchElementException:
-                    logger.debug("Element not found.")
-            except Exception as e:
-                logger.debug(f"Exception caused while waiting for element: {e}")
-
-        # except Exception as e:
-        #     logger.debug(f'Exception caught in using Selenium for streamlit {e}')
-        #     logger.debug('Using LocL Chrome webdriver')
-        #     service = Service('chrome_driver/chromedriver.exe')
-        #     options = webdriver.ChromeOptions()
-        #     options.add_argument("--headless")
-        #     driver = Chrome(service=service, options=options)
-        #     driver.set_page_load_timeout(10) 
         except Exception as e:
-
-            logger.debug(f'Using Firefox Webdriver on Streamlit as there was some exception in Chrome Webdriver : - {e}')
-            # Building Firefox webdriver.
-            TIMEOUT = 20
-            firefoxOptions = Options()
-            firefoxOptions.add_argument("--headless")
-            service = Service(GeckoDriverManager().install())
-            driver = webdriver.Firefox(
-                options=firefoxOptions,
-                service=service,
-            )
-            # Starting Scraping
-            stock_symbol = self._tickers
-            logger.debug(f'Opening the sustainablity rating web page')
-            driver.get("https://www.sustainalytics.com/esg-rating")
-            # time.sleep(1)
-            
-            # waiting for the page to load
-            # Searchig for stock symbol 
-            tickers = driver.find_element(By.ID, "searchInput")
-
-            # Enter Your Stock Symbol
-
-            for i in stock_symbol:
-
-                tickers.send_keys(i)
-                time.sleep(2)
-            
-            logger.debug(f'Opening the {self._tickers} link')
-            try:
-                wait = WebDriverWait(driver, 30)  # Increase the timeout as needed
-                element = wait.until(EC.element_to_be_clickable((By.XPATH, "//a[@class='search-link js-fix-path']")))
-                element.click()
-            except StaleElementReferenceException:
-                logger.debug("Stale element reference. Trying again to locate the element.")
-                try:
-                    element = driver.find_element(By.XPATH, "//a[@class='search-link js-fix-path']")
-                    element.click()
-                except NoSuchElementException:
-                    logger.debug("Element not found.")
-            except Exception as e:
-                logger.debug(f"Exception caused while waiting for element: {e}")
-
+            logger.debug(f'Exception caught in using Selenium for streamlit {e}')
+            logger.debug('Using LocL Chrome webdriver')
+            service = Service('chrome_driver/chromedriver.exe')
+            options = webdriver.ChromeOptions()
+            options.add_argument("--headless")
+            driver = Chrome(service=service, options=options)
+            driver.set_page_load_timeout(10) 
 
         # Opening webpage
+        stock_symbol = self._tickers
+        logger.debug(f'Opening the sustainablity rating web page')
+        driver.get("https://www.sustainalytics.com/esg-rating")
+        # time.sleep(1)
         
+        # waiting for the page to load
+        # Searchig for stock symbol 
+        tickers = driver.find_element(By.ID, "searchInput")
+
+        # Enter Your Stock Symbol
+
+        for i in stock_symbol:
+
+            tickers.send_keys(i)
+            time.sleep(2)
+        
+        logger.debug(f'Opening the {self._tickers} link')
+        try:
+            wait = WebDriverWait(driver, 30)  # Increase the timeout as needed
+            element = wait.until(EC.element_to_be_clickable((By.XPATH, "//a[@class='search-link js-fix-path']")))
+            element.click()
+        except StaleElementReferenceException:
+            logger.debug("Stale element reference. Trying again to locate the element.")
+            try:
+                element = driver.find_element(By.XPATH, "//a[@class='search-link js-fix-path']")
+                element.click()
+            except NoSuchElementException:
+                logger.debug("Element not found.")
+        except Exception as e:
+            logger.debug(f"Exception caused while waiting for element: {e}")
 
         src = driver.page_source
 
