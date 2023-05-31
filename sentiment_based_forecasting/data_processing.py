@@ -102,13 +102,8 @@ class download_tickers:
             # options.add_argument("--headless")
             # driver = Chrome(service=service, options=options)
             # driver.set_page_load_timeout(10)
-            uc.TARGET_VERSION = 114
 
             # or specify your own chromedriver binary (why you would need this, i don't know)
-
-            uc.install(
-                executable_path = 'c:/users/user1/chromedriver.exe' ,
-                )
             options = uc.ChromeOptions()
             options.add_argument("--headless")
             options.add_argument("--no-sandbox")
@@ -117,8 +112,7 @@ class download_tickers:
             options.add_argument("--disable-features=NetworkService")
             options.add_argument("--window-size=1920x1080")
             options.add_argument("--disable-features=VizDisplayCompositor") 
-            options.add_argument( f'--proxy-server=socks5://127.0.0.1:9050' )
-            driver = uc.Chrome( options = options )
+            driver = uc.Chrome( version_main = 114,options = options )
 
             
 
