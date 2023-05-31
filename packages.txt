@@ -1,2 +1,7 @@
 chromium
+<<<<<<< HEAD
 chromium-driver
+=======
+chromium-driver
+firefox-esr
+>>>>>>> parent of f052079 (removed chromium driver and selenium)
