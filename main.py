@@ -31,7 +31,6 @@ def clear_cache(session_state):
     session_state.cache = {}
 
 def streamlit_app(tasks, session_state):
-    st.balloons()
 
     # Perform data generation and analysis tasks
     st.subheader("Data Generation and Analysis")
@@ -148,16 +147,23 @@ def streamlit_app(tasks, session_state):
 
 if __name__ == '__main__':
     session_state = get_session_state()
-    st.snow()
-    st.write("<h1 style='font-size: 36px;'> ENTER STOCK SYMBOL TO CONTINUE </h1>", unsafe_allow_html=True)
+    show_message = True
+    
     st.title("COMPANY ANALYTICS")
     logo_path = "logo/kaninilogo.jpg"  # Replace with the actual path to your logo image
     logo_image = Image.open(logo_path)
     st.sidebar.image(logo_image, use_column_width=True)
     quote = st.sidebar.text_input("Enter company tickers SYMBOL")
+
     if quote:
+        show_message  = False
+        st.write("Stock Symbol Entered Now you can see latest company data")
         # Check if the stock symbol has changed
         if 'quote' in session_state.cache and session_state.cache['quote'] != quote:
             clear_cache(session_state)
         session_state.cache['quote'] = quote
         streamlit_app(tasks=PipelineTasks(quote=quote), session_state=session_state)
+
+    if show_message:
+        st.write("<span style='color: red; font-size: 24px;'>ENTER STOCK SYMBOL TO CONTINUE</span>", unsafe_allow_html=True)
+    
