@@ -42,7 +42,7 @@ def streamlit_app(tasks, session_state):
         session_state.cache['stock_data'] = tasks.data_generation()
         st.write("Data generation task completed!")
         st.write(f"Downloaded latest stock data of {tasks._quote}")
-        st.dataframe(session_state.cache['stock_data'].head())
+        st.dataframe(session_state.cache['stock_data'].tail(15))
 
     # ESG Data Generation
     esg_data_gen_button = st.button("Generate ESG Data")
