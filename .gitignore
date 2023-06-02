@@ -1,5 +1,6 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+notebook/
 notebooks/
 *.py[cod]
 *$py.class
@@ -106,3 +107,5 @@ playground_test.py
 /research/data/
 /configs/config_local_azure_creds.yaml
 /mapping/debug_data/
+notebook/rough.ipynb
+.gitignore
