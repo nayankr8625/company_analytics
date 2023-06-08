@@ -1,0 +1,1 @@
+from docbot.chat_with_doc import DocBot
