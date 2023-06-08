@@ -3,11 +3,15 @@ from PIL import Image
 from sentiment_based_forecasting.data_processing import download_tickers
 from sentiment_based_forecasting.ml_models import MLModels
 from sentiment_based_forecasting.pipeline import PipelineTasks
+from docbot import DocBot
+
+
 from services import measure_time, logger
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
 import nltk
+import tempfile
 # nltk.download('punkt')
 # nltk.download('vader_lexicon')
 
@@ -15,7 +19,7 @@ import nltk
 # Set Streamlit app title and sidebar
 st.set_page_config(page_title="COMPANY ANALYTICS", layout="wide")
 # Create a sidebar
-st.sidebar.title("WELCOME!")
+st.sidebar.title("WELCOME! WHAT DO YOU WANT TO DO TODAY?")
 
 # SessionState class for caching variables
 class SessionState:
@@ -30,7 +34,7 @@ def get_session_state():
 def clear_cache(session_state):
     session_state.cache = {}
 
-def streamlit_app(tasks, session_state):
+def streamlit_app_company_analytics(tasks, session_state):
 
     # Perform data generation and analysis tasks
     st.subheader("Data Generation and Analysis")
@@ -143,27 +147,81 @@ def streamlit_app(tasks, session_state):
                                           arima_result=arima_result,
                                           lstm_result=lstm_result,
                                           regressor_result=regressor_result))
+            
+def streamlit_app_docbot(document):
+    query = st.text_input('What do you want to ask with document')
+    st.subheader('Showing query response')
+
+    # Create a temporary file to store the document content
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        temp_file.write(document)
+        temp_file.seek(0)  # Reset the file position to the beginning
+
+        # Pass the file-like object (temp_file) or file path (temp_file.name) to DocBot
+        response = DocBot(query=query, data=temp_file.name).processor(openai_api_key='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')
+
+    st.write(response)
+
+
+    
+            
+            
+    
 
 
 if __name__ == '__main__':
-    session_state = get_session_state()
-    show_message = True
-    
-    st.title("COMPANY ANALYTICS")
-    logo_path = "logo/kaninilogo.jpg"  # Replace with the actual path to your logo image
+    st.title('CHAT WITH YOUR DOC')
+    logo_path = "logo/kaninilogo.jpg"
     logo_image = Image.open(logo_path)
     st.sidebar.image(logo_image, use_column_width=True)
-    quote = st.sidebar.text_input("Enter company tickers SYMBOL")
+    option_choose = True
 
-    if quote:
-        show_message  = False
-        st.write("Stock Symbol Entered Now you can see latest company data")
-        # Check if the stock symbol has changed
-        if 'quote' in session_state.cache and session_state.cache['quote'] != quote:
-            clear_cache(session_state)
-        session_state.cache['quote'] = quote
-        streamlit_app(tasks=PipelineTasks(quote=quote), session_state=session_state)
+    # Create a dropdown in the sidebar
+    selected_option = st.sidebar.selectbox(
+        "Select an option",
+        ("Streaming_Analytics", "DOCBOT")
+    )
 
-    if show_message:
-        st.write("<span style='color: red; font-size: 24px;'>ENTER STOCK SYMBOL TO CONTINUE</span>", unsafe_allow_html=True)
+    if selected_option == 'Streaming_Analytics':
+        option_choose = False
+
+
+        session_state = get_session_state()
+        show_message = True
+        
+        st.title("COMPANY ANALYTICS")
+        quote = st.sidebar.text_input("Enter company tickers SYMBOL")
+
+        if quote:
+            show_message  = False
+            st.write("Stock Symbol Entered Now you can see latest company data")
+            # Check if the stock symbol has changed
+            if 'quote' in session_state.cache and session_state.cache['quote'] != quote:
+                clear_cache(session_state)
+            session_state.cache['quote'] = quote
+            streamlit_app_company_analytics(tasks=PipelineTasks(quote=quote), session_state=session_state)
+
+        if show_message:
+            st.write("<span style='color: red; font-size: 24px;'>ENTER STOCK SYMBOL TO CONTINUE</span>", unsafe_allow_html=True)
+
+    elif selected_option == 'DOCBOT':
+        option_choose=False
+
+        st.title('CHAT WITH YOUR DOC')
+        uploaded_file = st.file_uploader("Upload your Document", type=["pdf", "doc"])
+        if uploaded_file:
+            file_contents = uploaded_file.read()
+            if file_contents is not None:
+                streamlit_app_docbot(document=file_contents)
+    else:
+        st.write("<span style='color: red; font-size: 24px;'>CHOOSE WHAT DO YOU WANT TO DO </span>", unsafe_allow_html=True)
+
+       
+
+    if option_choose:
+         st.write("<span style='color: red; font-size: 24px;'>CHOOSE WHAT DO YOU WANT TO DO </span>", unsafe_allow_html=True)
+
+
+            
+
     

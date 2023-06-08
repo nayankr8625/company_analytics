@@ -22,7 +22,13 @@ undetected_chromedriver
 webdriver-manager
 yfinance
 
+## docbot
 
+langchain
+openai
+PyPDF2
+faiss-cpu
+tiktoken
 
 
 
