@@ -11,6 +11,9 @@ import os
 import nltk
 import tempfile
 
+# nltk.download('punkt')
+# nltk.download('vader_lexicon')
+
 # Set Streamlit app title and sidebar
 st.set_page_config(page_title="COMPANY ANALYTICS", layout="wide")
 # Create a sidebar
