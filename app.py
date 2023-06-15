@@ -159,6 +159,22 @@ def streamlit_app_docbot(document):
 
         st.write(response)
 
+def streamlit_app_qa(document,task):
+    suggestion_button = st.button(label='Generate Question Suggestion')
+    if suggestion_button:
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                temp_file.write(document)
+                temp_file.seek(0)
+
+                suggestion = task.qa_suggestion(data=temp_file.name)
+
+        st.write(suggestion)
+
+        
+        
+
+
+
 
 if __name__ == '__main__':
     st.title('COMPANY ANALYTICS AND CHAT WITH DOCUMENT')
@@ -193,6 +209,8 @@ if __name__ == '__main__':
         if uploaded_file:
             file_contents = uploaded_file.read()
             if file_contents is not None:
+                st.subheader('Generating Question suggestion based on uploaded documents.')
+                streamlit_app_qa(document=file_contents,task=PipelineTasks())
                 streamlit_app_docbot(document=file_contents)
 
     if choose_option:

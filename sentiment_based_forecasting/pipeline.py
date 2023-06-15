@@ -1,6 +1,7 @@
 from sentiment_based_forecasting.data_processing import download_tickers
 from sentiment_based_forecasting.ml_models import MLModels
 from services import measure_time,logger
+from docbot import DocBot
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -8,7 +9,7 @@ import os
 
 class PipelineTasks:
 
-    def __init__(self,quote):
+    def __init__(self,quote=None):
 
         self._quote = quote
         self._model = MLModels(data=self.data_generation(),quote=self._quote)
@@ -233,4 +234,14 @@ class PipelineTasks:
             mess1,
             message
         }
+    @measure_time
+    def qa_suggestion(self,data):
+        query1 = '''
+                I want to act you as ESG expert and evaluate this CSR report based on latest ESG auditing norms.
+                From the above document i wanted to generate few relevant and important question based on ESG domain.
+                Suggest me 5 good Question prompts based on above documents.
+        '''
+        openai_api_key='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'
+        response = DocBot(query=query1, data=data).processor(openai_api_key=openai_api_key)
+        return response
         
